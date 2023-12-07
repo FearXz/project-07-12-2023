@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRUD Agenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .navbar-nav .nav-link.active,
+        .navbar-nav .nav-link.show {
+            --bs-nav-link-font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-body-tertiary">
+        <div class="container-md">
+            <a class="navbar-brand" href="#">EPIGENDA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./backoffice.html">Backoffice</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="container-md">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <h2 class="display-4 my-4">Appuntamenti
+                    <div class="spinner-border text-primary fs-6" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </h2>
+                <ul id="list" class="list-group">
+                    <!-- list item verranno generati qui programmaticamente -->
+                    <!-- <li class="list-group-item">An item</li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+
+    <script>
+        const URL = "https://striveschool-api.herokuapp.com/api/agenda/";
+
+        const fetchData = () => {
+            fetch(URL)
+                .then(response => {
+                    console.log(response)
+                    // controlli di guardia (guard clauses)
+                    if (response.status === 404) throw new Error("Errore, risorsa non trovata")
+                    if (response.status >= 400 && response.status < 500) throw new Error("Errore lato Client")
+                    if (response.status >= 500 && response.status < 600) throw new Error("Errore lato Server")
+                    if (!response.ok) throw new Error("Errore nel reperimento dei dati")
+
+
+                    // document.querySelector(".spinner-border").classList.add("d-none")
+                    return response.json()
+                })
+                .then(appointments => {
+
+
+                    const ul = document.getElementById("list")
+
+                    appointments.forEach(appointment => {
+                        const li = document.createElement("li")
+                        li.className = "list-group-item d-flex align-items-center"
+
+                        li.innerHTML = `<span class="me-auto">${appointment.name}</span> <span class="badge me-2 ${appointment.price ? "text-bg-dark" : "text-bg-success"}">${appointment.price ? appointment.price + "€" : "<em>free</em>"}</span> <a href="./details.html?resourceId=${appointment._id}">DETTAGLI</a>`
+
+                        ul.appendChild(li)
+                    })
+
+                })
+                .catch(err => {
+                    console.log("HUSTON ABBIAMO UN PROBLEMA: ", err)
+                    // document.querySelector(".spinner-border").classList.add("d-none")
+                })
+                .finally(() =>
+                    document.querySelector(".spinner-border").classList.add("d-none"))
+
+
+        }
+
+
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchData()
+        })
+
+    </script>
+</body>
+
+</html>
