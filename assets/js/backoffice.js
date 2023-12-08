@@ -4,20 +4,59 @@ const authToken =
 
 const parameters = new URLSearchParams(window.location.search);
 const productId = parameters.get("productId");
+const urlApi = "https://striveschool-api.herokuapp.com/api/product/";
 console.log(productId);
 
-const URL = productId
-  ? "https://striveschool-api.herokuapp.com/api/product/" + productId
-  : "https://striveschool-api.herokuapp.com/api/product/";
+const URL = productId ? urlApi + productId : urlApi;
 console.log(URL);
-
 const method = productId ? "PUT" : "POST";
 console.log(method);
+
 // WINDOWS ONLOAD SCOPE
 window.addEventListener("DOMContentLoaded", () => {
-  if (!productId) {
-    let submitButton = document.getElementById("submitButton");
-    submitButton.addEventListener("click", handleSubmit);
+  let submit = document.getElementById("myForm");
+  submit.addEventListener("submit", handleSubmit);
+
+  /*PUT MODE*/
+  if (productId) {
+    const submitBtn = document.getElementById("submitButton");
+    const deleteBtn = document.getElementById("deleteButton");
+    const actionTypeText = document.getElementById("actionType");
+
+    actionTypeText.textContent = "Edit Product";
+
+    submitBtn.value = "Edit Product";
+    submitBtn.classList.remove("btn-primary");
+    submitBtn.classList.add("btn-success");
+
+    deleteBtn.classList.remove("d-none");
+    deleteBtn.addEventListener("click", handleDeleteProduct);
+
+    isLoading(true);
+
+    fetch(URL, { headers: { Authorization: authToken } })
+      .then((serverResponse) => {
+        if (serverResponse.status === 404) throw new Error("Errore, risorsa non trovata");
+        if (serverResponse.status >= 400 && response.status < 500) throw new Error("Errore lato Client");
+        if (serverResponse.status >= 500 && response.status < 600) throw new Error("Errore lato Server");
+        if (!serverResponse.ok) throw new Error("Errore nel reperimento dei dati");
+
+        return serverResponse.json();
+      })
+      .then((EditableObj) => {
+        console.log(EditableObj);
+        document.getElementById("productName").value = EditableObj.name;
+        document.getElementById("productDescription").value = EditableObj.description;
+        document.getElementById("brand").value = EditableObj.brand;
+        document.getElementById("imgUrl").value = EditableObj.imageUrl;
+        document.getElementById("price").value = EditableObj.price;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        isLoading(false);
+      });
   }
 });
 //GLOBAL SCOPE
@@ -32,7 +71,7 @@ function handleSubmit(event) {
     price: document.getElementById("price").value,
   };
   console.log(newProduct);
-
+  isLoading(true);
   fetch(URL, {
     method: method,
     body: JSON.stringify(newProduct),
@@ -55,15 +94,56 @@ function handleSubmit(event) {
       return serverResponse.json();
     })
     .then((productObj) => {
-      showAlert("Prodotto: " + productObj._id + " aggiunto con successo!");
-      resetForm();
+      if (!productId) {
+        showAlert("Product: " + productObj._id + " has been added");
+        resetForm();
+      }
+      if (productId) {
+        showAlert("Product: " + productObj._id + " has been modified", "success");
+      }
     })
     .catch((error) => {
       console.log(error);
     })
-    .finally(() => {});
+    .finally(() => {
+      isLoading(false);
+    });
 }
+function handleDeleteProduct() {
+  const hasConfirmed = confirm("sei sicuro di voler eliminare l'appuntamento?");
 
+  if (hasConfirmed) {
+    isLoading(true);
+
+    fetch(URL, { method: "DELETE", headers: { Authorization: authToken } })
+      .then((serverResponse) => {
+        if (serverResponse.status === 404) {
+          throw new Error("Errore, risorsa non trovata");
+        }
+        if (serverResponse.status >= 400 && serverResponse.status < 500) {
+          throw new Error("Errore lato Client");
+        }
+        if (serverResponse.status >= 500 && serverResponse.status < 600) {
+          throw new Error("Errore lato Server");
+        }
+        if (!serverResponse.ok) {
+          throw new Error("Errore nel reperimento dei dati");
+        }
+
+        return serverResponse.json();
+      })
+      .then((deletedObj) => {
+        showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
+
+        setTimeout(() => {
+          window.location.assign("./index.html");
+        }, 1000);
+      })
+      .finally(() => {
+        isLoading(false);
+      });
+  }
+}
 function showAlert(message, colorCode = "primary") {
   const resultDiv = document.getElementById("resultAlert");
 
@@ -83,3 +163,12 @@ function resetForm() {
   document.getElementById("imgUrl").value = "";
   document.getElementById("price").value = "";
 }
+const isLoading = (boolean) => {
+  const spinner = document.querySelector(".spinner-border");
+
+  if (boolean) {
+    spinner.classList.remove("d-none");
+  } else {
+    spinner.classList.add("d-none");
+  }
+};

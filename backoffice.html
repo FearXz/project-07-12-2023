@@ -45,7 +45,13 @@
               <h2 class="mb-5">Back Office</h2>
             </div>
             <div id="fromContainer">
-              <form>
+              <div id="formType" class="d-flex">
+                <h3 id="actionType">Add Product</h3>
+                <div class="spinner-border text-primary ms-2 fs-6 d-none" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+              <form id="myForm">
                 <div class="form-floating mb-3">
                   <input type="text" class="form-control" id="productName" placeholder="Product Name" required />
                   <label for="productName">Product Name</label>
@@ -72,8 +78,9 @@
                   <input type="number" class="form-control" id="price" placeholder="Price" required />
                   <label for="price">Price</label>
                 </div>
-                <div class="">
+                <div class="d-flex justify-content-between">
                   <input id="submitButton" class="btn btn-primary mb-3" type="submit" value="Add new product" />
+                  <input id="deleteButton" class="btn btn-danger mb-3 d-none" type="button" value="Delete product" />
                 </div>
               </form>
               <div id="resultAlert"></div>

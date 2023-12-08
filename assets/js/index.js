@@ -3,6 +3,7 @@ const authToken =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcyMWQ5NTBkOGEyMDAwMThhNDhiNWIiLCJpYXQiOjE3MDE5Nzc0OTMsImV4cCI6MTcwMzE4NzA5M30.XcUjPWMghfRZrDIYh52I3pe1thgVFA-9sfhfL_wGyIk";
 
 window.addEventListener("DOMContentLoaded", () => {
+  isLoading(true);
   fetch(URL, { headers: { Authorization: authToken } })
     .then((serverResponse) => {
       if (serverResponse.status === 404) {
@@ -31,7 +32,9 @@ window.addEventListener("DOMContentLoaded", () => {
     .catch((error) => {
       console.log(error);
     })
-    .finally(() => {});
+    .finally(() => {
+      isLoading(false);
+    });
 });
 /* {
             "name":"Nokia 3010",
@@ -53,7 +56,7 @@ function createHtmlProduct(product) {
 
   let imgNode = document.createElement("img");
   imgNode.className = "fix-h-50 fix-w-50 object-fit-cover me-2";
-  imgNode.src = "https://m.media-amazon.com/images/I/614r6gJOBeL.jpg";
+  imgNode.src = product.imageUrl;
   imgNode.alt = "productImage";
 
   div1.appendChild(imgNode);
@@ -85,3 +88,12 @@ function createHtmlProduct(product) {
 
   return mainDiv;
 }
+const isLoading = (boolean) => {
+  const spinner = document.querySelector(".spinner-border");
+
+  if (boolean) {
+    spinner.classList.remove("d-none");
+  } else {
+    spinner.classList.add("d-none");
+  }
+};
