@@ -42,27 +42,46 @@ window.addEventListener("DOMContentLoaded", () => {
          } */
 function createHtmlProduct(product) {
   let productPageLink = "./product.html?productId=";
+  let mainDiv = document.createElement("div");
+  mainDiv.className = "d-flex align-item-center mb-2";
 
   let linkNode = document.createElement("a");
   linkNode.href = productPageLink + product._id;
-  linkNode.className = "list-group-item list-group-item-action mb-2";
+  linkNode.className = "list-group-item list-group-item-action d-flex align-items-center";
+
+  let div1 = document.createElement("div");
 
   let imgNode = document.createElement("img");
   imgNode.className = "fix-h-50 fix-w-50 object-fit-cover me-2";
   imgNode.src = "https://m.media-amazon.com/images/I/614r6gJOBeL.jpg";
   imgNode.alt = "productImage";
 
+  div1.appendChild(imgNode);
+  linkNode.appendChild(div1);
+
+  let div2 = document.createElement("div");
+
   let boldNode = document.createElement("b");
   boldNode.textContent = product.name;
   boldNode.className = "me-2";
 
+  div2.appendChild(boldNode);
+  linkNode.appendChild(div2);
+
+  let div3 = document.createElement("div");
+
   let spanNode = document.createElement("span");
   spanNode.textContent = product.description;
 
-  linkNode.appendChild(imgNode);
+  div3.appendChild(spanNode);
+  linkNode.appendChild(div3);
 
-  linkNode.appendChild(boldNode);
+  let editBtn = document.createElement("button");
+  editBtn.className = "btn btn-success rounded-0 me-2";
+  editBtn.textContent = "Edit";
 
-  linkNode.appendChild(spanNode);
-  return linkNode;
+  mainDiv.appendChild(linkNode);
+  mainDiv.appendChild(editBtn);
+
+  return mainDiv;
 }

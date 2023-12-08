@@ -1,9 +1,12 @@
 const URL = "https://striveschool-api.herokuapp.com/api/product/";
 const authToken =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcyMWQ5NTBkOGEyMDAwMThhNDhiNWIiLCJpYXQiOjE3MDE5Nzc0OTMsImV4cCI6MTcwMzE4NzA5M30.XcUjPWMghfRZrDIYh52I3pe1thgVFA-9sfhfL_wGyIk";
+
 const parameters = new URLSearchParams(window.location.search);
 const productId = parameters.get("productId");
+
 console.log(productId);
+
 window.addEventListener("DOMContentLoaded", () => {
   fetch(URL + productId, { headers: { Authorization: authToken } })
     .then((serverResponse) => {
