@@ -133,11 +133,12 @@ function handleDeleteProduct() {
         return serverResponse.json();
       })
       .then((deletedObj) => {
+        localStorage.setItem("deletedProduct", JSON.stringify(deletedObj));
         showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
-
-        setTimeout(() => {
-          window.location.assign("./index.html");
-        }, 1000);
+        window.location.assign("./index.html");
+        /*         setTimeout(() => {
+          
+        }, 1000); */
       })
       .finally(() => {
         isLoading(false);

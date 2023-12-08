@@ -5,6 +5,7 @@ let path = "./product.html?productId=";
 let isActive = false;
 
 window.addEventListener("DOMContentLoaded", () => {
+  checkDeleted();
   isLoading(true);
   fetch(URL, { headers: { Authorization: authToken } })
     .then((serverResponse) => {
@@ -110,4 +111,24 @@ function isLoading(boolean) {
   } else {
     spinner.classList.add("d-none");
   }
+}
+function checkDeleted() {
+  const deletedJson = localStorage.getItem("deletedProduct");
+  if (deletedJson != "") {
+    const deletedObj = JSON.parse(localStorage.getItem("deletedProduct"));
+    showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
+    localStorage.setItem("deletedProduct", "");
+  }
+}
+function showAlert(message, colorCode = "primary") {
+  const resultDiv = document.getElementById("resultAlert");
+
+  resultDiv.innerHTML = `
+  <div class="alert alert-${colorCode}" role="alert">
+    ${message}
+  </div>`;
+
+  setTimeout(() => {
+    resultDiv.innerHTML = "";
+  }, 3000);
 }
