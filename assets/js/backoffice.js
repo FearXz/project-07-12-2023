@@ -78,18 +78,11 @@ function handleSubmit(event) {
     headers: { "Content-Type": "application/json", Authorization: authToken },
   })
     .then((serverResponse) => {
-      if (serverResponse.status === 404) {
-        throw new Error("Errore, risorsa non trovata");
-      }
-      if (serverResponse.status >= 400 && serverResponse.status < 500) {
-        throw new Error("Errore lato Client");
-      }
-      if (serverResponse.status >= 500 && serverResponse.status < 600) {
-        throw new Error("Errore lato Server");
-      }
-      if (!serverResponse.ok) {
-        throw new Error("Errore nel reperimento dei dati");
-      }
+      if (serverResponse.status === 400) throw new Error("Product already exist");
+      if (serverResponse.status === 404) throw new Error("Error, resource not found");
+      if (serverResponse.status >= 400 && serverResponse.status < 500) throw new Error("Client Error");
+      if (serverResponse.status >= 500 && serverResponse.status < 600) throw new Error("Server Error");
+      if (!serverResponse.ok) throw new Error("Error retrieving data");
 
       return serverResponse.json();
     })
@@ -103,6 +96,7 @@ function handleSubmit(event) {
       }
     })
     .catch((error) => {
+      showAlert(error.message, "danger");
       console.log(error);
     })
     .finally(() => {
