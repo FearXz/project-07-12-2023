@@ -8,6 +8,7 @@ const productId = parameters.get("productId");
 console.log(productId);
 
 window.addEventListener("DOMContentLoaded", () => {
+  isLoading(true);
   fetch(URL + productId, { headers: { Authorization: authToken } })
     .then((serverResponse) => {
       if (serverResponse.status === 404) {
@@ -33,7 +34,9 @@ window.addEventListener("DOMContentLoaded", () => {
     .catch((error) => {
       console.log(error);
     })
-    .finally(() => {});
+    .finally(() => {
+      isLoading(false);
+    });
 });
 
 function productDetail(product) {
@@ -100,10 +103,11 @@ function productDetail(product) {
   rowDiv.appendChild(col8Div);
   return rowDiv;
 }
-/* {
-            "name":"Nokia 3010",
-            "description": "indestructible cellphone",
-            "brand":"nokia",
-            "imageUrl":"https://m.media-amazon.com/images/I/614r6gJOBeL.jpg",
-            "price":30
-         } */
+function isLoading(boolean) {
+  const spinner = document.querySelector(".spinner-border");
+  if (boolean) {
+    spinner.classList.remove("d-none");
+  } else {
+    spinner.classList.add("d-none");
+  }
+}

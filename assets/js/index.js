@@ -3,7 +3,7 @@ const authToken =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcyMWQ5NTBkOGEyMDAwMThhNDhiNWIiLCJpYXQiOjE3MDE5Nzc0OTMsImV4cCI6MTcwMzE4NzA5M30.XcUjPWMghfRZrDIYh52I3pe1thgVFA-9sfhfL_wGyIk";
 let path = "./product.html?productId=";
 let isActive = false;
-
+let searchArray = [];
 window.addEventListener("DOMContentLoaded", () => {
   checkDeleted();
   isLoading(true);
@@ -37,6 +37,23 @@ window.addEventListener("DOMContentLoaded", () => {
           generateProductList(productsObj);
         }
       });
+
+      let searchForm = document.getElementById("searchForm");
+      searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        searchArray = [];
+
+        let inputSearch = document.getElementById("inputSearch").value;
+        productsObj.forEach((product) => {
+          if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
+            searchArray.push(product);
+            console.log(searchArray);
+            generateProductList(searchArray);
+          }
+        });
+        generateProductList(searchArray);
+      });
+
       generateProductList(productsObj);
     })
     .catch((error) => {
