@@ -163,7 +163,7 @@ function resetForm() {
   document.getElementById("imgUrl").value = "";
   document.getElementById("price").value = "";
 }
-const isLoading = (boolean) => {
+function isLoading(boolean) {
   const spinner = document.querySelector(".spinner-border");
 
   if (boolean) {
@@ -171,4 +171,4 @@ const isLoading = (boolean) => {
   } else {
     spinner.classList.add("d-none");
   }
-};
+}

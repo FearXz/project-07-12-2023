@@ -1,6 +1,8 @@
 const URL = "https://striveschool-api.herokuapp.com/api/product/";
 const authToken =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcyMWQ5NTBkOGEyMDAwMThhNDhiNWIiLCJpYXQiOjE3MDE5Nzc0OTMsImV4cCI6MTcwMzE4NzA5M30.XcUjPWMghfRZrDIYh52I3pe1thgVFA-9sfhfL_wGyIk";
+let path = "./product.html?productId=";
+let isActive = false;
 
 window.addEventListener("DOMContentLoaded", () => {
   isLoading(true);
@@ -21,13 +23,27 @@ window.addEventListener("DOMContentLoaded", () => {
 
       return serverResponse.json();
     })
-    .then((ProductsObj) => {
-      let itemContainer = document.querySelector(".list-group");
+    .then((productsObj) => {
+      let editBtnMode = document.getElementById("editMode");
+      editBtnMode.addEventListener("click", () => {
+        isActive = !isActive;
+        let listItem = document.querySelectorAll(".list-group > div");
 
-      ProductsObj.forEach((product) => {
-        let newProduct = createHtmlProduct(product);
-        itemContainer.appendChild(newProduct);
+        if (isActive) {
+          path = "./backoffice.html?productId=";
+          /*           listItem.forEach((listedProduct) => {
+            listedProduct.classList.add("border", "border-5", "border-success");
+          }); */
+          generateProductList(productsObj, "border border-5 border-success");
+        } else {
+          path = "./product.html?productId=";
+          /*           listItem.forEach((listedProduct) => {
+            listedProduct.classList.remove("border", "border-5", "border-success");
+          }); */
+          generateProductList(productsObj);
+        }
       });
+      generateProductList(productsObj);
     })
     .catch((error) => {
       console.log(error);
@@ -36,20 +52,23 @@ window.addEventListener("DOMContentLoaded", () => {
       isLoading(false);
     });
 });
-/* {
-            "name":"Nokia 3010",
-            "description": "indestructible cellphone",
-            "brand":"nokia",
-            "imageUrl":"https://m.media-amazon.com/images/I/614r6gJOBeL.jpg",
-            "price":30
-         } */
-function createHtmlProduct(product) {
-  let productPageLink = "./product.html?productId=";
+function generateProductList(arrayProductsObj, editCode) {
+  let itemContainer = document.querySelector(".list-group");
+  itemContainer.innerHTML = "";
+
+  arrayProductsObj.forEach((product) => {
+    let newProduct = createProduct(product, editCode);
+    itemContainer.appendChild(newProduct);
+  });
+}
+function createProduct(product, editCode) {
+  let pageLink = path;
+
   let mainDiv = document.createElement("div");
-  mainDiv.className = "d-flex align-item-center mb-2";
+  mainDiv.className = "d-flex align-item-center mb-2 " + editCode;
 
   let linkNode = document.createElement("a");
-  linkNode.href = productPageLink + product._id;
+  linkNode.href = pageLink + product._id;
   linkNode.className = "list-group-item list-group-item-action d-flex align-items-center";
 
   let div1 = document.createElement("div");
@@ -74,26 +93,21 @@ function createHtmlProduct(product) {
   let div3 = document.createElement("div");
 
   let spanNode = document.createElement("span");
+  spanNode.className = "overflow-hidden";
   spanNode.textContent = product.description;
 
   div3.appendChild(spanNode);
   linkNode.appendChild(div3);
 
-  let editBtn = document.createElement("button");
-  editBtn.className = "btn btn-success rounded-0 me-2";
-  editBtn.textContent = "Edit";
-
   mainDiv.appendChild(linkNode);
-  mainDiv.appendChild(editBtn);
 
   return mainDiv;
 }
-const isLoading = (boolean) => {
+function isLoading(boolean) {
   const spinner = document.querySelector(".spinner-border");
-
   if (boolean) {
     spinner.classList.remove("d-none");
   } else {
     spinner.classList.add("d-none");
   }
-};
+}
