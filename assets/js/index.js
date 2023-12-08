@@ -28,7 +28,6 @@ window.addEventListener("DOMContentLoaded", () => {
       let editBtnMode = document.getElementById("editMode");
       editBtnMode.addEventListener("click", () => {
         isActive = !isActive;
-        let listItem = document.querySelectorAll(".list-group > div");
 
         if (isActive) {
           path = "./backoffice.html?productId=";
