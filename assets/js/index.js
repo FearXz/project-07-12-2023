@@ -27,29 +27,18 @@ window.addEventListener("DOMContentLoaded", () => {
       return serverResponse.json();
     })
 
-    .then((productsObj) => {
-      localStorage.setItem("lastArrayUsed", JSON.stringify(productsObj));
+    .then((arrayProductsObj) => {
+      localStorage.setItem("lastArrayUsed", JSON.stringify(arrayProductsObj));
 
       let editBtnMode = document.getElementById("editMode");
       editBtnMode.addEventListener("click", handleEdit);
 
       let searchForm = document.getElementById("searchForm");
       searchForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        searchArray = [];
-
-        let inputSearch = document.getElementById("inputSearch").value;
-        productsObj.forEach((product) => {
-          if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
-            searchArray.push(product);
-            console.log(searchArray);
-          }
-        });
-        localStorage.setItem("lastArrayUsed", JSON.stringify(searchArray));
-        generateProductList(searchArray);
+        handleSearchSubmit(event, arrayProductsObj);
       });
 
-      generateProductList(productsObj);
+      generateProductList(arrayProductsObj);
     })
     .catch((error) => {
       console.log(error);
@@ -136,6 +125,20 @@ function showAlert(message, colorCode = "primary") {
   setTimeout(() => {
     resultDiv.innerHTML = "";
   }, 3000);
+}
+function handleSearchSubmit(event, arrayProductsObj) {
+  event.preventDefault();
+  searchArray = [];
+
+  let inputSearch = document.getElementById("inputSearch").value;
+  arrayProductsObj.forEach((product) => {
+    if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
+      searchArray.push(product);
+      console.log(searchArray);
+    }
+  });
+  localStorage.setItem("lastArrayUsed", JSON.stringify(searchArray));
+  generateProductList(searchArray);
 }
 function handleEdit() {
   let arrayToCheck = JSON.parse(localStorage.getItem("lastArrayUsed"));
