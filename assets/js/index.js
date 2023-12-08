@@ -48,7 +48,6 @@ window.addEventListener("DOMContentLoaded", () => {
           if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
             searchArray.push(product);
             console.log(searchArray);
-            generateProductList(searchArray);
           }
         });
         generateProductList(searchArray);
