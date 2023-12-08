@@ -32,15 +32,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (isActive) {
           path = "./backoffice.html?productId=";
-          /*           listItem.forEach((listedProduct) => {
-            listedProduct.classList.add("border", "border-5", "border-success");
-          }); */
           generateProductList(productsObj, "border border-5 border-success");
         } else {
           path = "./product.html?productId=";
-          /*           listItem.forEach((listedProduct) => {
-            listedProduct.classList.remove("border", "border-5", "border-success");
-          }); */
           generateProductList(productsObj);
         }
       });
