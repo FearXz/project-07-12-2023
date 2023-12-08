@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", () => {
     submitButton.addEventListener("click", handleSubmit);
   }
 });
-
+//GLOBAL SCOPE
 function handleSubmit(event) {
   event.preventDefault();
 
