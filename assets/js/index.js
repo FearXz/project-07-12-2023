@@ -6,7 +6,9 @@ let isActive = false;
 let searchArray = [];
 window.addEventListener("DOMContentLoaded", () => {
   checkDeleted();
+
   isLoading(true);
+
   fetch(URL, { headers: { Authorization: authToken } })
     .then((serverResponse) => {
       if (serverResponse.status === 404) {
@@ -24,19 +26,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
       return serverResponse.json();
     })
-    .then((productsObj) => {
-      let editBtnMode = document.getElementById("editMode");
-      editBtnMode.addEventListener("click", () => {
-        isActive = !isActive;
 
-        if (isActive) {
-          path = "./backoffice.html?productId=";
-          generateProductList(productsObj, "border border-5 border-success");
-        } else {
-          path = "./product.html?productId=";
-          generateProductList(productsObj);
-        }
-      });
+    .then((productsObj) => {
+      localStorage.setItem("lastArrayUsed", JSON.stringify(productsObj));
+
+      let editBtnMode = document.getElementById("editMode");
+      editBtnMode.addEventListener("click", handleEdit);
 
       let searchForm = document.getElementById("searchForm");
       searchForm.addEventListener("submit", (event) => {
@@ -50,6 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log(searchArray);
           }
         });
+        localStorage.setItem("lastArrayUsed", JSON.stringify(searchArray));
         generateProductList(searchArray);
       });
 
@@ -140,4 +136,16 @@ function showAlert(message, colorCode = "primary") {
   setTimeout(() => {
     resultDiv.innerHTML = "";
   }, 3000);
+}
+function handleEdit() {
+  let arrayToCheck = JSON.parse(localStorage.getItem("lastArrayUsed"));
+  isActive = !isActive;
+
+  if (isActive) {
+    path = "./backoffice.html?productId=";
+    generateProductList(arrayToCheck, "border border-5 border-success");
+  } else {
+    path = "./product.html?productId=";
+    generateProductList(arrayToCheck);
+  }
 }
