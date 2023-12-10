@@ -19,47 +19,63 @@ window.addEventListener("DOMContentLoaded", () => {
 
   /*PUT MODE*/
   if (productId) {
-    const submitBtn = document.getElementById("submitButton");
-    const deleteBtn = document.getElementById("deleteButton");
-    const actionTypeText = document.getElementById("actionType");
-
-    actionTypeText.textContent = "Edit Product";
-
-    submitBtn.value = "Edit Product";
-    submitBtn.classList.remove("btn-primary");
-    submitBtn.classList.add("btn-success");
-
-    deleteBtn.classList.remove("d-none");
-    deleteBtn.addEventListener("click", handleDeleteProduct);
+    goEditMode();
 
     isLoading(true);
 
-    fetch(URL, { headers: { Authorization: authToken } })
-      .then((serverResponse) => {
-        if (serverResponse.status === 404) throw new Error("Errore, risorsa non trovata");
-        if (serverResponse.status >= 400 && response.status < 500) throw new Error("Errore lato Client");
-        if (serverResponse.status >= 500 && response.status < 600) throw new Error("Errore lato Server");
-        if (!serverResponse.ok) throw new Error("Errore nel reperimento dei dati");
-
-        return serverResponse.json();
-      })
-      .then((EditableObj) => {
-        console.log(EditableObj);
-        document.getElementById("productName").value = EditableObj.name;
-        document.getElementById("productDescription").value = EditableObj.description;
-        document.getElementById("brand").value = EditableObj.brand;
-        document.getElementById("imgUrl").value = EditableObj.imageUrl;
-        document.getElementById("price").value = EditableObj.price;
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        isLoading(false);
-      });
+    fetchDataEditMode();
   }
 });
 //GLOBAL SCOPE
+function goEditMode() {
+  const submitBtn = document.getElementById("submitButton");
+  const deleteBtn = document.getElementById("deleteButton");
+  const actionTypeText = document.getElementById("actionType");
+
+  actionTypeText.textContent = "Edit Product";
+
+  submitBtn.value = "Edit Product";
+  submitBtn.classList.remove("btn-primary");
+  submitBtn.classList.add("btn-success");
+
+  deleteBtn.classList.remove("d-none");
+
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+  confirmDeleteBtn.addEventListener("click", () => {
+    fetchDeleteProduct();
+  });
+}
+function fetchDataEditMode() {
+  fetch(URL, { headers: { Authorization: authToken } })
+    .then((serverResponse) => {
+      if (serverResponse.status === 404) throw new Error("Errore, risorsa non trovata");
+      if (serverResponse.status >= 400 && response.status < 500) throw new Error("Errore lato Client");
+      if (serverResponse.status >= 500 && response.status < 600) throw new Error("Errore lato Server");
+      if (!serverResponse.ok) throw new Error("Errore nel reperimento dei dati");
+
+      return serverResponse.json();
+    })
+    .then((EditableObj) => {
+      let productName = document.querySelector(".modal-title");
+      productName.innerHTML = "Deleting " + EditableObj.name;
+
+      let confirmMessage = document.querySelector(".modal-body p");
+      confirmMessage.innerHTML = "Do you want to remove " + EditableObj.name + " ?";
+
+      console.log(EditableObj);
+      document.getElementById("productName").value = EditableObj.name;
+      document.getElementById("productDescription").value = EditableObj.description;
+      document.getElementById("brand").value = EditableObj.brand;
+      document.getElementById("imgUrl").value = EditableObj.imageUrl;
+      document.getElementById("price").value = EditableObj.price;
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      isLoading(false);
+    });
+}
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -103,38 +119,34 @@ function handleSubmit(event) {
       isLoading(false);
     });
 }
-function handleDeleteProduct() {
-  const hasConfirmed = confirm("sei sicuro di voler eliminare il prodotto?");
+function fetchDeleteProduct() {
+  isLoading(true);
 
-  if (hasConfirmed) {
-    isLoading(true);
+  fetch(URL, { method: "DELETE", headers: { Authorization: authToken } })
+    .then((serverResponse) => {
+      if (serverResponse.status === 404) {
+        throw new Error("Errore, risorsa non trovata");
+      }
+      if (serverResponse.status >= 400 && serverResponse.status < 500) {
+        throw new Error("Errore lato Client");
+      }
+      if (serverResponse.status >= 500 && serverResponse.status < 600) {
+        throw new Error("Errore lato Server");
+      }
+      if (!serverResponse.ok) {
+        throw new Error("Errore nel reperimento dei dati");
+      }
 
-    fetch(URL, { method: "DELETE", headers: { Authorization: authToken } })
-      .then((serverResponse) => {
-        if (serverResponse.status === 404) {
-          throw new Error("Errore, risorsa non trovata");
-        }
-        if (serverResponse.status >= 400 && serverResponse.status < 500) {
-          throw new Error("Errore lato Client");
-        }
-        if (serverResponse.status >= 500 && serverResponse.status < 600) {
-          throw new Error("Errore lato Server");
-        }
-        if (!serverResponse.ok) {
-          throw new Error("Errore nel reperimento dei dati");
-        }
-
-        return serverResponse.json();
-      })
-      .then((deletedObj) => {
-        localStorage.setItem("deletedProduct", JSON.stringify(deletedObj));
-        showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
-        window.location.assign("./index.html");
-      })
-      .finally(() => {
-        isLoading(false);
-      });
-  }
+      return serverResponse.json();
+    })
+    .then((deletedObj) => {
+      localStorage.setItem("deletedProduct", JSON.stringify(deletedObj));
+      showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
+      window.location.assign("./index.html");
+    })
+    .finally(() => {
+      isLoading(false);
+    });
 }
 function showAlert(message, colorCode = "primary") {
   const resultDiv = document.getElementById("resultAlert");
