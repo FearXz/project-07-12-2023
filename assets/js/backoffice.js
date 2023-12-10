@@ -104,7 +104,7 @@ function handleSubmit(event) {
     });
 }
 function handleDeleteProduct() {
-  const hasConfirmed = confirm("sei sicuro di voler eliminare l'appuntamento?");
+  const hasConfirmed = confirm("sei sicuro di voler eliminare il prodotto?");
 
   if (hasConfirmed) {
     isLoading(true);
@@ -130,9 +130,6 @@ function handleDeleteProduct() {
         localStorage.setItem("deletedProduct", JSON.stringify(deletedObj));
         showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
         window.location.assign("./index.html");
-        /*         setTimeout(() => {
-          
-        }, 1000); */
       })
       .finally(() => {
         isLoading(false);
