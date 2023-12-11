@@ -129,16 +129,19 @@ function showAlert(message, colorCode = "primary") {
 function handleSearchSubmit(event, arrayProductsObj) {
   event.preventDefault();
   searchArray = [];
-
-  let inputSearch = document.getElementById("inputSearch").value;
-  arrayProductsObj.forEach((product) => {
-    if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
-      searchArray.push(product);
-      console.log(searchArray);
-    }
-  });
-  localStorage.setItem("lastArrayUsed", JSON.stringify(searchArray));
-  generateProductList(searchArray);
+  if (isActive) {
+    showAlert("Cannot use search function while in Edit Mode ", "danger");
+  } else {
+    let inputSearch = document.getElementById("inputSearch").value;
+    arrayProductsObj.forEach((product) => {
+      if (product.name.toLowerCase().includes(inputSearch.toLowerCase())) {
+        searchArray.push(product);
+        console.log(searchArray);
+      }
+    });
+    localStorage.setItem("lastArrayUsed", JSON.stringify(searchArray));
+    generateProductList(searchArray);
+  }
 }
 function handleEdit() {
   let arrayToCheck = JSON.parse(localStorage.getItem("lastArrayUsed"));
