@@ -1,6 +1,6 @@
 const URL = "https://striveschool-api.herokuapp.com/api/product/";
 const authToken =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcyMWQ5NTBkOGEyMDAwMThhNDhiNWIiLCJpYXQiOjE3MDE5Nzc0OTMsImV4cCI6MTcwMzE4NzA5M30.XcUjPWMghfRZrDIYh52I3pe1thgVFA-9sfhfL_wGyIk";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTg0NTMwZWI1MjViYjAwMThlZDA4NWQiLCJpYXQiOjE3MDQ3NDA0MjYsImV4cCI6MTcwNTk1MDAyNn0.3sRzj0xlkO_ZVFe-NEcIewbBa495WAgFkdBVlm2zzro";
 let path = "./product.html?productId=";
 let isActive = false;
 let searchArray = [];
@@ -108,7 +108,10 @@ function isLoading(boolean) {
 }
 function checkDeleted() {
   const deletedJson = localStorage.getItem("deletedProduct");
-  if (deletedJson != "") {
+  /*   if (deletedJson == null) {
+    deletedJson = "";
+  } */
+  if (deletedJson != "" && deletedJson != null) {
     const deletedObj = JSON.parse(localStorage.getItem("deletedProduct"));
     showAlert("Product: " + deletedObj.name + " id: " + deletedObj._id + "has been eliminated", "danger");
     localStorage.setItem("deletedProduct", "");
